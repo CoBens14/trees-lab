@@ -190,22 +190,75 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
      * 3. neither null
      */
 
-     public Node<T> deleteH(Node<T> cur, T value) {
+     public Node<T> findValue(Node<T> cur, T value) {
         Node<T> nodeT = null;
         if (cur.left == null && cur.right == null) {
             nodeT = null;
+        } else if (cur.left.value.compareTo(value) == 0 || cur.right.value.compareTo(value) == 0){
+            nodeT = cur;
         } else {
+            if (cur.value.compareTo(value) > 0) {
+                nodeT = findValue(cur.left, value);
+            } else {
+                nodeT = findValue(cur.right, value);
+            }
+            /* 
             if (cur.left != null) {
-                nodeT = deleteH(cur.left, value);
+                nodeT = findValue(cur.left, value);
+                if (nodeT == null && cur.right != null) {
+                    nodeT = findValue(cur.right, value);
+                }
             }
-            if (nodeT == null && cur.right != null) {
-                nodeT = deleteH(cur.right, value);
-            }
+                */
+            
         }
         return nodeT;
     }
 
-    public void appendRight(Node<T> valueNode) {
+
+    private Node<T> traverseRight (Node<T> leftNode){
+        if (leftNode.right.right == null){
+            return leftNode;
+        }
+        else{
+            return traverseRight(leftNode.right);
+        }
+    }
+
+
+    private Node<T> traverseLeft (Node<T> rightNode){
+        if (rightNode.left.left == null){
+            return rightNode;
+        }
+        else{
+            return traverseLeft(rightNode.left);
+        }
+    }
+
+    private void remove(Node<T> parentNode, T value) {
+
+        Node <T> found;
+        Node <T> removeNodeParent;
+
+        if(parentNode.right.value == value){
+            found = parentNode.right;
+            removeNodeParent = traverseRight(found.left);
+            Node <T> temp = removeNodeParent.right;
+            removeNodeParent.right = temp.left;
+
+            parentNode.right = temp;
+            temp.right = found.right;
+            temp.left = found.left;
+
+        }else {
+            found = parentNode.left;
+            removeNodeParent = traverseLeft(found.right);
+            Node <T> temp = removeNodeParent.left;
+            removeNodeParent.left = temp.right;
+            parentNode.left = temp;
+            temp.left = found.left;
+            temp.right = found.right;
+        }
 
     }
 
@@ -217,8 +270,8 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
      */
     public void delete(T value) {
         if (root != null) {
-            Node<T> valueNode = deleteH(root, value);
-            s
+            Node<T> parentNode = findValue(root, value);
+            remove(parentNode, value);
         }
     }
 }
