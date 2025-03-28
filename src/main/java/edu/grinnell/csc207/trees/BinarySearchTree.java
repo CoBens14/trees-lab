@@ -1,6 +1,7 @@
 package edu.grinnell.csc207.trees;
 
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * A binary tree that satisifies the binary search tree invariant.
@@ -79,36 +80,85 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
     }
 
     ///// Part 1: Traversals
+    /// 
 
+    public void inOrderH(Node<T> cur, List<T> list) {
+        if (cur != null) {
+            inOrderH(cur.left, list);
+            list.add(cur.value);
+            inOrderH(cur.right, list);
+        }
+    }
     /**
+     * 
+     * 
      * @return the elements of this tree collected via an in-order traversal
      */
     public List<T> toListInorder() {
-        throw new UnsupportedOperationException();
+        List<T> list = new ArrayList<>();
+        inOrderH(root, list);
+        return list;
+    }
+
+    public void preOrderH(Node<T> cur, List<T> list) {
+        if (cur != null) {
+            list.add(cur.value);
+            preOrderH(cur.left, list);
+            preOrderH(cur.right, list);
+        }
     }
 
     /**
+     * Look at cur, left tree, right tree
+     * 
      * @return the elements of this tree collected via a pre-order traversal
      */
     public List<T> toListPreorder() {
-        throw new UnsupportedOperationException();
+        List<T> list = new ArrayList<>();
+        preOrderH(root, list);
+        return list;
+    }
+
+    public void postOrderH(Node<T> cur, List<T> list) {
+        if (cur != null) {
+            postOrderH(cur.left, list);
+            postOrderH(cur.right, list);
+            list.add(cur.value);
+        }
     }
 
     /**
      * @return the elements of this tree collected via a post-order traversal
      */
     public List<T> toListPostorder() {
-        throw new UnsupportedOperationException();
+        List<T> list = new ArrayList<>();
+        postOrderH(root, list);
+        return list;
     }
 
     ///// Part 2: Contains
+
+
+    public boolean containsH(Node<T> cur, T value) {
+        boolean b;
+        if (cur == null) {
+            b = false;
+        }   else {
+            if(cur.value.compareTo(value) == 0) {
+               b = true;
+            } else {
+            b = containsH(cur.left, value) || containsH(cur.right, value);
+        }
+        }
+        return b;
+    }
 
     /**
      * @param value the value to search for
      * @return true iff the tree contains <code>value</code>
      */
     public boolean contains(T value) {
-        throw new UnsupportedOperationException();
+        return containsH(root, value);
     }
 
     ///// Part 3: Pretty Printing
@@ -118,17 +168,46 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
      *         form: "[v0, v1, ..., vn]"
      */
     public String toStringPreorder() {
-        throw new UnsupportedOperationException();
+        List<T> list = toListPreorder();
+        StringBuffer buf = new StringBuffer("[");
+        buf.append(list.get(0));
+
+        for(int i = 1; i < list.size(); i++ ) {
+            buf.append(", ");
+            buf.append(list.get(i));
+        }
+
+        buf.append("]");
+        return buf.toString();
     }
 
     ///// Part 4: Deletion
   
     /*
      * The three cases of deletion are:
-     * 1. (TODO: fill me in!)
-     * 2. (TODO: fill me in!)
-     * 3. (TOOD: fill me in!)
+     * 1. left null
+     * 2. right null
+     * 3. neither null
      */
+
+     public Node<T> deleteH(Node<T> cur, T value) {
+        Node<T> nodeT = null;
+        if (cur.left == null && cur.right == null) {
+            nodeT = null;
+        } else {
+            if (cur.left != null) {
+                nodeT = deleteH(cur.left, value);
+            }
+            if (nodeT == null && cur.right != null) {
+                nodeT = deleteH(cur.right, value);
+            }
+        }
+        return nodeT;
+    }
+
+    public void appendRight(Node<T> valueNode) {
+
+    }
 
     /**
      * Modifies the tree by deleting the first occurrence of <code>value</code> found
@@ -137,6 +216,9 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
      * @param value the value to delete
      */
     public void delete(T value) {
-        throw new UnsupportedOperationException();
+        if (root != null) {
+            Node<T> valueNode = deleteH(root, value);
+            s
+        }
     }
 }
